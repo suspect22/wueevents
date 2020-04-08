@@ -1,0 +1,9 @@
+# django>=2.2.2,<2.2.0
+django
+asgiref
+setuptools
+sqlparse
+djangorestframework
+markdown
+django-filter
+djangorestframework-simplejwt

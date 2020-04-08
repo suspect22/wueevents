@@ -1,0 +1,18 @@
+[
+  {
+    "model": "webfrontent.website",
+    "pk": 1,
+    "fields": {
+      "title": "Cairo",
+      "url": "https://cafe-cairo.de",
+      "enabled": true,
+      "runtime": "11:13:10",
+      "start_date": "2020-04-06",
+      "latitude": "49.0",
+      "longitude": "9.0",
+      "street": null,
+      "zip_code": null,
+      "location": null
+    }
+  }
+]
