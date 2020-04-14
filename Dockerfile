@@ -1,17 +1,21 @@
-FROM python:3
+FROM python:3.6
 MAINTAINER suspect22
 
-#
 ENV PYTHONUNBUFFERED 1
+ENV PYTHONUSER pythonenvuser
+ENV WORKDIR /pythonenv
 
 COPY ./requirements.txt /pythonenv/requirements.txt
 RUN pip install -r /pythonenv/requirements.txt
 
-WORKDIR /pythonenv
-COPY ./wueevents /pythonenv
+WORKDIR ${WORKDIR}
+COPY ./wueevents ${WORKDIR}
+RUN adduser ${PYTHONUSER} --disabled-password --gecos "" && \
+    chown ${PYTHONUSER}.$PYTHONUSER ${WORKDIR} && \
+    chmod 755 ${WORKDIR}
 
-RUN adduser -q pythonenvuser
-USER PythonEnvUser
+
+USER ${PYTHONUSER}
 
 EXPOSE 8000/udp
 EXPOSE 8000/tcp

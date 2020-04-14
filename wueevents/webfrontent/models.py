@@ -1,9 +1,8 @@
 from django.db import models
 
 
-# Create your models here.
-
 class Website(models.Model):
+    """Model to create Websites which will be crawled"""
     SCHEDULE_DAILY = 'D'
     SCHEDULE_HOURLY = 'H'
     SCHEDULE_WEEKLY = 'W'
@@ -29,3 +28,15 @@ class Website(models.Model):
 
     def __str__(self):
         return "%s | %s | %s" % (self.title, self.schedule, self.enabled)
+
+
+class ScheduledElement(models.Model):
+    """Scheduled Crawl object which displays crawl Schedules"""
+    website = models.ForeignKey(
+        Website,
+        on_delete=models.CASCADE
+    )
+    scheduled_date=models.DateTimeField()
+
+    def __str__(self):
+        return "%s | %s" % (getattr(self.website, 'title'), str(self.scheduled_date))
