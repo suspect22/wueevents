@@ -69,7 +69,7 @@ class TestModels(TestCase):
 
     def test_crawler_run_string_representation(self):
         """
-        Test that the scheduled run Representation includes
+        Test that the scheduled run Representation includes 
         the execution time and the website name
         """
         website = Website.objects.create(**self.VALID_WEBSITE)

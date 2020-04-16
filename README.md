@@ -7,3 +7,4 @@ The Collector should then generate an Calendar output in which the events can be
 (Thunderbird/Android Device)
 
 [![Build Status](https://travis-ci.org/suspect22/wueevents.svg?branch=master)](https://travis-ci.org/suspect22/wueevents)
+[![Coverage Status](https://coveralls.io/repos/github/suspect22/wueevents/badge.svg?branch=master)](https://coveralls.io/github/suspect22/wueevents?branch=master)
