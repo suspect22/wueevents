@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext as _
-from django.utils.timezone import now
+
 
 class Website(models.Model):
     """Model to create Websites which will be crawled"""
@@ -39,7 +39,7 @@ class WebsiteElementMapping(models.Model):
     """Model to create Element Mappings between Calendar and Crawler"""
 
     class Meta:
-        unique_together = (("name","website"))
+        unique_together = (("name", "website"))
 
     # Enum like field for Mapping Ical Calendar Elements to displayed values
     SUMMARY = 'summary'
@@ -106,12 +106,13 @@ class CrawlerRun(models.Model):
     """Element which persists the runs of the crawler into the database"""
     exit_code = models.IntegerField(default=-1)
     execution_time = models.DateTimeField()
-    schedule_element = models.ForeignKey(
+    crawler_queue_element = models.ForeignKey(
         CrawlerQueueElement,
         on_delete=models.CASCADE,
-        null=True
     )
 
     def __str__(self):
         """ String Representation used in List views """
-        pass
+        return f"%s | %s" % (
+            self.crawler_queue_element.website.title,
+            str(self.execution_time))

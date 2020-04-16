@@ -28,7 +28,7 @@ class TestModels(TestCase):
             Scheduled Date"""
         website = Website.objects.create(**self.VALID_WEBSITE)
         crawler_element_under_test = CrawlerQueueElement.objects.create(
-            website=website,next_run=now())
+            website=website, next_run=now())
         self.assertIn(website.title, str(crawler_element_under_test))
         self.assertIn(
                       str(crawler_element_under_test.next_run),
@@ -46,7 +46,10 @@ class TestModels(TestCase):
         )
 
         self.assertIn(website.title, str(calendar_mapping_under_test))
-        self.assertIn(WebsiteElementMapping.SUMMARY, str(calendar_mapping_under_test))
+        self.assertIn(
+            WebsiteElementMapping.SUMMARY,
+            str(calendar_mapping_under_test)
+            )
 
     def test_wesite_calendar_mapping_exists_only_one_time(self):
         """Test that a dulicate mapping for a Field does not exist"""
@@ -65,12 +68,21 @@ class TestModels(TestCase):
             )
 
     def test_crawler_run_string_representation(self):
-        """ 
-        Test that the scheduled run Representation includes the 
-        execution time and the website name
+        """
+        Test that the scheduled run Representation includes
+        the execution time and the website name
         """
         website = Website.objects.create(**self.VALID_WEBSITE)
-        WebsiteElementMapping.objects.create(
+        crawlerQueueElement = CrawlerQueueElement.objects.create(
             website=website,
-            html_element="#someRandomElement"
+            next_run=now()
         )
+        crawler_run_under_test = CrawlerRun.objects.create(
+            execution_time=now(),
+            crawler_queue_element=crawlerQueueElement
+        )
+        self.assertIn(getattr(website, 'title'), str(crawler_run_under_test))
+        self.assertIn(
+            str(crawler_run_under_test.execution_time),
+            str(crawler_run_under_test)
+            )
