@@ -1,23 +1,32 @@
-FROM python:3.6
+FROM python:3.8.2-alpine
 MAINTAINER suspect22
 
 ENV PYTHONUNBUFFERED 1
+ENV PROJECTPATH /pythonenv
 ENV PYTHONUSER pythonenvuser
-ENV WORKDIR /pythonenv
+ENV PROJECTSOURCE ./wueevents/
+ENV EXPOSEPORT 8000
+ENV VOLUMESDIR /vol/web/
+ENV MEDIADIR ${VOLUMESDIR}media
+ENV STATICDIR ${VOLUMESDIR}static
 
-COPY ./requirements.txt /pythonenv/requirements.txt
-RUN pip install -r /pythonenv/requirements.txt
-
-WORKDIR ${WORKDIR}
-COPY ./wueevents ${WORKDIR}
-RUN adduser ${PYTHONUSER} --disabled-password --gecos "" && \
-    chown ${PYTHONUSER}.$PYTHONUSER ${WORKDIR} && \
-    chmod 755 ${WORKDIR}
-
+COPY ./requirements.txt /requirements.txt
+RUN apk add --update --no-cache postgresql-client jpeg-dev \
+    && apk add --update --no-cache --virtual .tmp-build-deps \
+        gcc libc-dev linux-headers postgresql-dev \
+        musl-dev zlib zlib-dev jpeg-dev \
+    && pip install -r /requirements.txt \
+    && mkdir -p ${MEDIADIR} \
+    && mkdir -p ${STATICDIR} \
+    && adduser -D ${PYTHONUSER} \
+    && chown -R ${PYTHONUSER}.${PYTHONUSER} ${VOLUMESDIR} \
+    && chmod -R 755 ${VOLUMESDIR} \
+    && mkdir ${PROJECTPATH} \
+    && apk del .tmp-build-deps
+WORKDIR ${PROJECTPATH}
+#COPY ${PROJECTSOURCE} ${PROJECTPATH}
 
 USER ${PYTHONUSER}
 
-EXPOSE 8000/udp
-EXPOSE 8000/tcp
-COPY . /pythonenv
-ENTRYPOINT python /pythonenv/wueevents/manage.py runserver 0.0.0.0:8000
+EXPOSE ${EXPOSEPORT}/udp
+EXPOSE ${EXPOSEPORT}/tcp
