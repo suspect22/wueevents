@@ -8,7 +8,6 @@ class PrivateApiTests(TestCase):
     """Holds all API Tests which will doesn't require authenticated Users"""
 
     API_ENDPOINT_WEBSITE = reverse("webapi:website-list")
-    API_ENDPOINT_SCHEDULEDELEMENT = reverse("webapi:scheduledelement-list")
 
     def setUp(self):
         self.apiClient = APIClient()

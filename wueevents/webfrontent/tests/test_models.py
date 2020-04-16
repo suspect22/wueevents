@@ -1,6 +1,7 @@
 from unittest import TestCase
-from webfrontent.models import Website, ScheduledElement, ElementMapping
-from datetime import datetime,date
+from webfrontent.models import Website, WebsiteElementMapping
+from webfrontent.models import CrawlerQueueElement, CrawlerRun
+from django.utils.timezone import now
 from django.db.utils import IntegrityError
 
 
@@ -11,7 +12,7 @@ class TestModels(TestCase):
         'title': 'Testwebsite',
         'url': 'https://ard.de',
         'schedule': Website.SCHEDULE_DAILY,
-        'start_date': date.today(),
+        'start_date': now(),
         'enabled': False
     }
 
@@ -22,43 +23,54 @@ class TestModels(TestCase):
 
         self.assertIn(self.VALID_WEBSITE['title'], stringRepresentation)
 
-    def test_scheduled_elements_string_representation(self):
+    def test_crawler_queue_elements_string_representation(self):
         """Test that the string representation includes Website name and \
             Scheduled Date"""
         website = Website.objects.create(**self.VALID_WEBSITE)
-        scheduled_element_under_test = ScheduledElement.objects.create(
-            website=website,scheduled_date=datetime.now())
-        self.assertIn(website.title, str(scheduled_element_under_test))
+        crawler_element_under_test = CrawlerQueueElement.objects.create(
+            website=website,next_run=now())
+        self.assertIn(website.title, str(crawler_element_under_test))
         self.assertIn(
-                      str(scheduled_element_under_test.scheduled_date),
-                      str(scheduled_element_under_test)
+                      str(crawler_element_under_test.next_run),
+                      str(crawler_element_under_test)
                  )
 
-    def test_calendar_mapping_string_representation(self):
+    def test_website_calendar_mapping_string_representation(self):
         """Test that the string reprentation includes Website name and \
             Element Mapping"""
         website = Website.objects.create(**self.VALID_WEBSITE)
-        calendar_mapping_under_test = ElementMapping.objects.create(
+        calendar_mapping_under_test = WebsiteElementMapping.objects.create(
             website=website,
             html_element="#someRandomIdElement",
-            name=ElementMapping.SUMMARY
+            name=WebsiteElementMapping.SUMMARY
         )
 
         self.assertIn(website.title, str(calendar_mapping_under_test))
-        self.assertIn(ElementMapping.SUMMARY, str(calendar_mapping_under_test))
+        self.assertIn(WebsiteElementMapping.SUMMARY, str(calendar_mapping_under_test))
 
-    def test_calendar_mapping_exists_only_one_time(self):
+    def test_wesite_calendar_mapping_exists_only_one_time(self):
         """Test that a dulicate mapping for a Field does not exist"""
         website = Website.objects.create(**self.VALID_WEBSITE)
-        ElementMapping.objects.create(
+        WebsiteElementMapping.objects.create(
             website=website,
             html_element="#someRandomIdElement",
-            name=ElementMapping.SUMMARY
+            name=WebsiteElementMapping.SUMMARY
         )
 
         with self.assertRaises(IntegrityError):
-            ElementMapping.objects.create(
+            WebsiteElementMapping.objects.create(
                 website=website,
                 html_element="#anotherRadomIdElement",
-                name=ElementMapping.SUMMARY
+                name=WebsiteElementMapping.SUMMARY
             )
+
+    def test_crawler_run_string_representation(self):
+        """ 
+        Test that the scheduled run Representation includes the 
+        execution time and the website name
+        """
+        website = Website.objects.create(**self.VALID_WEBSITE)
+        WebsiteElementMapping.objects.create(
+            website=website,
+            html_element="#someRandomElement"
+        )

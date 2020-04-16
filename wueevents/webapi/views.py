@@ -2,8 +2,7 @@
 from rest_framework import viewsets, permissions
 
 from webapi.serializers.website import WebsiteSerializer
-from webapi.serializers.scheduledelement import ScheduledElementSerializer
-from webfrontent.models import Website, ScheduledElement
+from webfrontent.models import Website
 
 
 class WebsiteViewSet(viewsets.ModelViewSet):
@@ -12,11 +11,4 @@ class WebsiteViewSet(viewsets.ModelViewSet):
     """
     queryset = Website.objects.all().order_by('id')
     serializer_class = WebsiteSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-
-class ScheduledElementViewSet(viewsets.ModelViewSet):
-    """API endpoint that allow Users to edit Elements"""
-    queryset = ScheduledElement.objects.all().order_by('-schedule_date')
-    serializer_class = ScheduledElementSerializer
     permission_classes = [permissions.IsAuthenticated]
