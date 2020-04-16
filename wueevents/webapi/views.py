@@ -1,5 +1,3 @@
-from django.shortcuts import render
-
 # Create your views here.
 from rest_framework import viewsets, permissions
 
@@ -18,9 +16,7 @@ class WebsiteViewSet(viewsets.ModelViewSet):
 
 
 class ScheduledElementViewSet(viewsets.ModelViewSet):
-     """
-     API endpoint that allow Users to edit Elements
-     """
-     queryset = ScheduledElement.objects.all().order_by('-schedule_date')
-     serializer_class = ScheduledElementSerializer
-     permission_classes = [permissions.IsAuthenticated]
+    """API endpoint that allow Users to edit Elements"""
+    queryset = ScheduledElement.objects.all().order_by('-schedule_date')
+    serializer_class = ScheduledElementSerializer
+    permission_classes = [permissions.IsAuthenticated]

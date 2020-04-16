@@ -8,3 +8,4 @@ markdown
 django-filter
 djangorestframework-simplejwt
 flake8
+psycopg2
