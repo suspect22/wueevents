@@ -1,4 +1,4 @@
-from unittest import TestCase
+from django.test import TestCase
 from webfrontent.models import Website, WebsiteElementMapping
 from webfrontent.models import CrawlerQueueElement, CrawlerRun
 from django.utils.timezone import now
