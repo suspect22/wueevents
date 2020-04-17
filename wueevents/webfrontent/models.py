@@ -27,6 +27,9 @@ class Website(models.Model):
     zip_code = models.CharField(max_length=5, null=True)
     location = models.CharField(max_length=200, null=True)
 
+    def isMappingComplete(self):
+        raise NotImplementedError
+
     def __str__(self):
         return "%s | %s | %s" % (self.title, self.schedule, self.enabled)
 
@@ -34,7 +37,7 @@ class Website(models.Model):
 class ElementMapping(models.Model):
 
     class Meta:
-        unique_together = (("name","website"))
+        unique_together = (("name", "website"))
 
     """Model to create Element Mappings between Calendar and Crawler"""
     SUMMARY = 'summary'
@@ -90,3 +93,4 @@ class ScheduledElement(models.Model):
     def __str__(self):
         return "%s | %s" % (getattr(self.website, 'title'),
                             str(self.scheduled_date))
+

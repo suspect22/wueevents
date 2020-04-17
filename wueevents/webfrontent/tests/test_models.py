@@ -1,6 +1,6 @@
-from unittest import TestCase
+from django.test import TestCase
 from webfrontent.models import Website, ScheduledElement, ElementMapping
-from datetime import datetime,date
+from datetime import datetime, date
 from django.db.utils import IntegrityError
 
 
@@ -15,6 +15,19 @@ class TestModels(TestCase):
         'enabled': False
     }
 
+    def create_sample_mapping(
+            self,
+            website,
+            html_element="#StartDate > a",
+            name=ElementMapping.STARTDATE
+        ):
+        output_element = ElementMapping.objects.create(
+            website=website,
+            html_element=html_element,
+            name=name
+        )
+        return output_element
+
     def test_website_string_representation(self):
         """Test that the string representation includes specific values"""
         website_under_test = Website.objects.create(**self.VALID_WEBSITE)
@@ -27,7 +40,7 @@ class TestModels(TestCase):
             Scheduled Date"""
         website = Website.objects.create(**self.VALID_WEBSITE)
         scheduled_element_under_test = ScheduledElement.objects.create(
-            website=website,scheduled_date=datetime.now())
+            website=website, scheduled_date=datetime.now())
         self.assertIn(website.title, str(scheduled_element_under_test))
         self.assertIn(
                       str(scheduled_element_under_test.scheduled_date),
@@ -47,7 +60,7 @@ class TestModels(TestCase):
         self.assertIn(website.title, str(calendar_mapping_under_test))
         self.assertIn(ElementMapping.SUMMARY, str(calendar_mapping_under_test))
 
-    def test_calendar_mapping_exists_only_one_time(self):
+    def test_calendar_mapping_unique_constraint(self):
         """Test that a dulicate mapping for a Field does not exist"""
         website = Website.objects.create(**self.VALID_WEBSITE)
         ElementMapping.objects.create(
@@ -62,3 +75,24 @@ class TestModels(TestCase):
                 html_element="#anotherRadomIdElement",
                 name=ElementMapping.SUMMARY
             )
+
+    def test_website_crawler_setup_is_valid(self):
+        """
+        Test that all required Mappings for a valid Website have
+        to be available in is Mapping completed function
+        """
+        website = Website.objects.create(**self.VALID_WEBSITE)
+        self.create_sample_mapping(website, name=ElementMapping.STARTDATE)
+        self.create_sample_mapping(website, name=ElementMapping.ENDDATE)
+        self.create_sample_mapping(website, name=ElementMapping.STARTTIME)
+        self.assertTrue(website.isMappingComplete())
+
+    def test_website_crawler_setup_is_invalid(self):
+        """
+        Test that isMapping complete does not return true if
+        required Mappings are invalid
+        """
+        website = Website.objects.create(**self.VALID_WEBSITE)
+        self.create_sample_mapping(website, name=ElementMapping.ENDDATE)
+        self.create_sample_mapping(website, name=ElementMapping.STARTTIME)
+        self.assertTrue(website.isMappingComplete())
