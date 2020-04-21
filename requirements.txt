@@ -7,5 +7,6 @@ djangorestframework
 markdown
 django-filter
 djangorestframework-simplejwt
-flake8
 psycopg2
+flake8
+coveralls

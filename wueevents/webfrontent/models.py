@@ -40,6 +40,7 @@ class ElementMapping(models.Model):
         unique_together = (("name", "website"))
 
     """Model to create Element Mappings between Calendar and Crawler"""
+    ALLEVENTS='allEvents'
     SUMMARY = 'summary'
     STARTDATE = 'dtstart'
     ENDDATE = 'dtend'
@@ -69,14 +70,6 @@ class ElementMapping(models.Model):
         default=SUMMARY,
     )
     html_element = models.CharField(max_length=50)
-    # start_time = None
-    # end_time=None
-    # summary=None
-    # organizer=None
-    # title=None
-    # external_link=None
-    # longitude=None
-    # latitute=None
 
     def __str__(self):
         return f'%s | %s' % (getattr(self.website, "title"), self.name)
